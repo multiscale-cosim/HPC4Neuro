@@ -19,6 +19,17 @@ from slns.errors import DataDistributionError
 #       How can one test proper execution with shutdown_on_error=True ??
 
 
+class SizedIterable:
+    def __init__(self, iterable):
+        self._iterable = iterable
+
+    def __iter__(self):
+        return iter(self._iterable)
+
+    def __len__(self):
+        return len(self._iterable)
+
+
 class IterableNotSized:
     def __init__(self, iterable):
         self._iterable = iterable
@@ -33,6 +44,18 @@ class SizedNotIterable:
 
     def __len__(self):
         return len(self._iterable)
+
+
+def make_sized_iterable(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+
+        sized_iterable = SizedIterable(result)
+
+        return sized_iterable
+
+    return wrapper
 
 
 def make_not_sized(func):
@@ -133,6 +156,24 @@ class TestDistribution:
 
         dist_decorator = DataDistributor(MPI.COMM_WORLD, shutdown_on_error=False)
         get_rank_local_filenames = dist_decorator(os.listdir)
+
+        updated_filenames = get_rank_local_filenames(tmpdir)
+
+        assert len(updated_filenames) >= 1
+
+    def test_custom_iterable(self, tmpdir):
+        num_ranks = MPI.COMM_WORLD.Get_size()
+
+        filenames = generate_filenames(num_files=num_ranks)
+
+        for filename in filenames:
+            with open(os.path.join(tmpdir, filename), 'w') as f:
+                f.write(filename)
+
+        callable_ = make_sized_iterable(os.listdir)
+
+        dist_decorator = DataDistributor(MPI.COMM_WORLD, shutdown_on_error=False)
+        get_rank_local_filenames = dist_decorator(callable_)
 
         updated_filenames = get_rank_local_filenames(tmpdir)
 
