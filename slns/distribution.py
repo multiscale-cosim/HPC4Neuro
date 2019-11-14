@@ -141,25 +141,12 @@ class DataDistributor:
 
         @functools.wraps(data_loader)
         def wrapper(*args, **kwargs):
-            data_items = None
-
             if self._is_root:
-                try:
-                    data_items = data_loader(*args, **kwargs)
-                except Exception as error:  # pylint: disable=broad-except
-                    result = {
-                        Constants.STATUS: Constants.FAILURE,
-                        Constants.MESSAGE: f'Error during data loading: {str(error)}'
-                    }
-                else:
-                    result = {
-                        Constants.STATUS: Constants.SUCCESS,
-                        Constants.MESSAGE: None
-                    }
+                data_items, error = self._load_data(data_loader, *args, **kwargs)
             else:
-                result = None
+                data_items, error = None, None
 
-            self._manage_error_status(result)
+            self._manage_error_status(error)
 
             self._manage_error_status(
                 self._check_if_iterable(data_items)
@@ -187,6 +174,25 @@ class DataDistributor:
             return items
 
         return wrapper
+
+    @staticmethod
+    def _load_data(loader, *args, **kwargs):
+        data_items = None
+
+        try:
+            data_items = loader(*args, **kwargs)
+        except Exception as error:  # pylint: disable=broad-except
+            result = {
+                Constants.STATUS: Constants.FAILURE,
+                Constants.MESSAGE: f'Error during data loading: {str(error)}'
+            }
+        else:
+            result = {
+                Constants.STATUS: Constants.SUCCESS,
+                Constants.MESSAGE: None
+            }
+
+        return data_items, result
 
     def _check_type(self, obj, check_func, err_msg):
         result = None
