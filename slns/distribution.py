@@ -153,6 +153,10 @@ class DataDistributor:
             )
 
             self._manage_error_status(
+                self._check_if_sized(data_items)
+            )
+
+            self._manage_error_status(
                 self._check_if_enough_items(data_items)
             )
 
