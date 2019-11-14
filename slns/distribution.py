@@ -18,8 +18,8 @@ from slns.errors import DataDistributionError
 @enum.unique
 class Constants(enum.Enum):
     """
-    A collection of constants useful for communication of result
-    status amongst MPI ranks.
+    Constants useful for communicating result status amongst
+    MPI ranks.
 
     """
 
@@ -30,8 +30,9 @@ class Constants(enum.Enum):
 
 
 class ErrorHandler:
+    # pylint: disable=too-few-public-methods
     """
-    Collections of functions that can gracefully handle exceptions/errors
+    Set of functions that can gracefully handle exceptions/errors
     in MPI programs running with one or more ranks.
 
     """
@@ -110,7 +111,6 @@ class DataDistributor:
 
         return representation
 
-    # TODO: document the exception that can be raised ...
     def __call__(self, data_loader, shuffle=False):
         """
         Decorates the given function so that instead of returning all the
@@ -119,12 +119,23 @@ class DataDistributor:
         details are handled internally, so that the caller need not
         implement these.
 
-        :param data_loader: Any function that returns an iterable of data_items.
+        :param data_loader: Any function that returns a sized iterable of data_items,
+                            i.e., it should be possible to call iter() and len() on
+                            the object returned from the function.
+                            A function that does not return a sized iterable causes
+                            an error. Also, if the number of items in the iterable
+                            is less than the No. of MPI ranks, an error is
+                            generated.
         :param shuffle: If True, the iterable of all data items is shuffled before
-                        distribution amongst MPI ranks.
+                        distribution amongst MPI ranks. RNG used is from the
+                        'random' package in the Python standard library.
 
-        :return: Decorated function. The function when called returns a list
-                 of data items to be processed by the local MPI rank.
+        :return Decorated function. The function when called returns a list
+                of data items to be processed by the local MPI rank.
+
+        :exception slns.errors import DataDistributionError can be raised if
+                   'shutdown on error' is not requested at the time of object
+                   creation.
 
         """
 
@@ -133,10 +144,25 @@ class DataDistributor:
             data_items = None
 
             if self._is_root:
-                data_items = data_loader(*args, **kwargs)
+                try:
+                    data_items = data_loader(*args, **kwargs)
+                except Exception as error:  # pylint: disable=broad-except
+                    result = {
+                        Constants.STATUS: Constants.FAILURE,
+                        Constants.MESSAGE: f'Error during data loading: {str(error)}'
+                    }
+                else:
+                    result = {
+                        Constants.STATUS: Constants.SUCCESS,
+                        Constants.MESSAGE: None
+                    }
+            else:
+                result = None
+
+            self._manage_error_status(result)
 
             self._manage_error_status(
-                self._check_if_iterable(data_items, data_loader)
+                self._check_if_iterable(data_items)
             )
 
             self._manage_error_status(
@@ -162,17 +188,13 @@ class DataDistributor:
 
         return wrapper
 
-    def _check_if_iterable(self, data_items, data_loader):
+    def _check_type(self, obj, check_func, err_msg):
         result = None
 
         if self._is_root:
             try:
-                iter(data_items)
+                check_func(obj)
             except TypeError:
-                err_msg = f'Value returned by {repr(data_loader)} is not an iterable. ' \
-                          f'The function to be decorated by {self.__class__.__name__} ' \
-                          f'must return an iterable.'
-
                 result = {
                     Constants.STATUS: Constants.FAILURE,
                     Constants.MESSAGE: err_msg
@@ -184,6 +206,22 @@ class DataDistributor:
                 }
 
         return result
+
+    def _check_if_iterable(self, data_items):
+        err_msg = f'Value returned by the provided data loader is not an' \
+                  f'iterable, i.e., it is not possible to call iter() on it. ' \
+                  f'The function to be decorated by {self.__class__.__name__} ' \
+                  f'must return an iterable.'
+
+        return self._check_type(data_items, iter, err_msg)
+
+    def _check_if_sized(self, data_items):
+        err_msg = f'Value returned by the provided data loader is not a sized' \
+                  f'object, i.e., it is not possible to call len() on it. ' \
+                  f'The function to be decorated by {self.__class__.__name__} ' \
+                  f'must return a sized object.'
+
+        return self._check_type(data_items, len, err_msg)
 
     def _check_if_enough_items(self, data_items):
         result = None
