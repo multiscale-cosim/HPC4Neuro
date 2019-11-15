@@ -1,3 +1,10 @@
+# Copyright (c) 2019 Forschungszentrum Juelich GmbH
+# This code is licensed under MIT license (see the LICENSE file for details)
+
+"""
+    Test suite to test the slns.distribution module.
+
+"""
 
 import os
 import tempfile
@@ -5,17 +12,24 @@ import functools
 import itertools
 
 import pytest
+import numpy as np
 from mpi4py import MPI
 
 from slns.distribution import DataDistributor
 from slns.errors import DataDistributionError
 
 
+# MPI communicator info required by multiple test classes
 rank = MPI.COMM_WORLD.Get_rank()
 num_ranks = MPI.COMM_WORLD.Get_size()
 
 
 class SizedIterable:
+    """
+    A type that is both iterable and sized.
+
+    """
+
     def __init__(self, iterable):
         self._iterable = iterable
 
@@ -27,6 +41,11 @@ class SizedIterable:
 
 
 class IterableNotSized:
+    """
+    An iterable type that is not sized.
+
+    """
+
     def __init__(self, iterable):
         self._iterable = iterable
 
@@ -35,6 +54,11 @@ class IterableNotSized:
 
 
 class SizedNotIterable:
+    """
+    A sized type that is not iterable.
+
+    """
+
     def __init__(self, iterable):
         self._iterable = iterable
 
@@ -43,6 +67,18 @@ class SizedNotIterable:
 
 
 def change_result_type(func, custom_type):
+    """
+    Decorator that converts the type of the object returned by
+    the function to be decorated, to the given type.
+
+    :param func: Function to be decorated.
+    :param custom_type: Type of the object to be returned by the
+                decorated function.
+
+    :return: Decorated function.
+
+    """
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         result = func(*args, **kwargs)
@@ -54,13 +90,17 @@ def change_result_type(func, custom_type):
     return wrapper
 
 
-def generate_filenames(num_files):
-    return [f'file_{i}.txt' for i in range(num_files)]
-
-
 def generate_files(target_dir, num_files):
+    """
+    Generated the given number of files in the given directory.
+
+    :param target_dir: Directory in which to create files.
+    :param num_files: No. of the files to be created.
+
+    """
+
     if rank == 0:
-        filenames = generate_filenames(num_files)
+        filenames = [f'file_{i}.txt' for i in range(num_files)]
 
         for filename in filenames:
             with open(os.path.join(target_dir, filename), 'w') as f:
@@ -68,13 +108,68 @@ def generate_files(target_dir, num_files):
 
 
 def get_decorated_func(func, shutdown_on_error):
+    """
+    Decorate the given function with the DataDistributor and
+    return the decorated function.
+
+    :param func: Function to be decorated.
+    :param shutdown_on_error: Parameter to be passed to the DataDistributor.
+
+    :return: Decorated function.
+
+    """
+
     decorator = DataDistributor(
         MPI.COMM_WORLD, shutdown_on_error=shutdown_on_error)
 
     return decorator(func)
 
 
+@pytest.fixture(scope='class', params=['list', 'custom', 'numpy'])
+def distributed_filenames(request):
+    """
+    Setup for testing distribution of iterables of filenames.
+
+    :param request: Parameters.
+
+    :return: Tuple. (List of lists of all filenames received by all
+                ranks after distribution, name of the temporary
+                directory in which files are created)
+
+    """
+
+    # Create a temporary data directory
+    with tempfile.TemporaryDirectory(prefix='slns_test_') as data_dir:
+        # Generate files in the created directory
+        generate_files(data_dir, num_files=num_ranks)
+
+        # Use the iterable's data type as per the received parameter
+        if request.param == 'list':
+            data_loader = os.listdir
+        elif request.param == 'custom':
+            data_loader = change_result_type(os.listdir, SizedIterable)
+        elif request.param == 'numpy':
+            data_loader = change_result_type(os.listdir, np.char.array)
+
+        # Decorate the data loader with distribution functionality
+        decorated_func = get_decorated_func(data_loader, shutdown_on_error=False)
+
+        # Call the decorated function to get the list of rank-local
+        # filenames
+        rank_local_filenames = decorated_func(data_dir)
+
+        # Collect a list of all lists of filenames from all ranks
+        gathered_filename_lists = MPI.COMM_WORLD.allgather(rank_local_filenames)
+
+        yield gathered_filename_lists, data_dir
+
+
 class TestExceptionHandling:
+    """
+    Tests to verify proper raising of exceptions in error scenarios.
+
+    """
+
     def test_error_from_data_loader(self):
         """
         An error thrown by the decorated data loader function should
@@ -153,65 +248,26 @@ class TestExceptionHandling:
             decorated_func(tmpdir)
 
 
-@pytest.fixture(scope='class')
-def distributed_filenames():
-    # Create a temporary data directory
-    with tempfile.TemporaryDirectory(prefix='slns_test_') as data_dir:
-        # Generate files in a temporary directory
-        generate_files(data_dir, num_files=num_ranks)
-
-        # Decorate the data loader with distribution functionality
-        decorated_func = get_decorated_func(os.listdir, shutdown_on_error=False)
-
-        # Call the decorated function to get the list of rank-local
-        # filenames
-        rank_local_filenames = decorated_func(data_dir)
-
-        # Collect a list of all lists of filenames from all ranks
-        gathered_filename_lists = MPI.COMM_WORLD.allgather(rank_local_filenames)
-
-        yield gathered_filename_lists, data_dir
-
-
-# TODO: Test distribution of numpy arrays ...
 class TestFilenamesDistribution:
-    def test_distribution_happened(self, tmpdir):
-        rank = MPI.COMM_WORLD.Get_rank()
-        num_ranks = MPI.COMM_WORLD.Get_size()
+    """
+    Tests to verify correct data distribution with different
+    types of sized iterables.
 
-        filenames = generate_filenames(num_files=num_ranks)
+    The items being distributed are names of files created in
+    a temporary directory.
 
-        for filename in filenames:
-            with open(os.path.join(tmpdir, filename), 'w') as f:
-                f.write(filename)
-
-        dist_decorator = DataDistributor(MPI.COMM_WORLD, shutdown_on_error=False)
-        get_rank_local_filenames = dist_decorator(os.listdir)
-
-        updated_filenames = get_rank_local_filenames(tmpdir)
-
-        assert len(updated_filenames) >= 1
-
-    def test_custom_iterable(self, tmpdir):
-        num_ranks = MPI.COMM_WORLD.Get_size()
-
-        filenames = generate_filenames(num_files=num_ranks)
-
-        for filename in filenames:
-            with open(os.path.join(tmpdir, filename), 'w') as f:
-                f.write(filename)
-
-        # data_loader = make_sized_iterable(os.listdir)
-        data_loader = change_result_type(os.listdir, SizedIterable)
-
-        dist_decorator = DataDistributor(MPI.COMM_WORLD, shutdown_on_error=False)
-        get_rank_local_filenames = dist_decorator(data_loader)
-
-        updated_filenames = get_rank_local_filenames(tmpdir)
-
-        assert len(updated_filenames) >= 1
+    """
 
     def test_all_ranks_get_items(self, distributed_filenames):
+        """
+        Verify that each rank receives at least one item as a
+        result of distribution.
+
+        :param distributed_filenames: Tuple generated by the
+                    corresponding fixture.
+
+        """
+
         gathered_filename_lists, _ = distributed_filenames
 
         # The No. of lists returned should equal the No. of ranks
@@ -221,6 +277,15 @@ class TestFilenamesDistribution:
         assert all(filenames for filenames in gathered_filename_lists)
 
     def test_ranks_get_disjoint_subsets(self, distributed_filenames):
+        """
+        Verify that ranks receive disjoint subsets of items, i.e., no
+        two ranks receive the same item.
+
+        :param distributed_filenames: Tuple generated by the
+                    corresponding fixture.
+
+        """
+
         gathered_filename_lists, _ = distributed_filenames
 
         # Fuse the received list of lists into one list
@@ -230,6 +295,15 @@ class TestFilenamesDistribution:
         assert len(all_filenames) == len(set(all_filenames))
 
     def test_all_items_are_distributed(self, distributed_filenames):
+        """
+        Verify that items from the iterable are all distributed, i.e.,
+        no item is left out.
+
+        :param distributed_filenames: Tuple generated by the
+                    corresponding fixture.
+
+        """
+
         gathered_filename_lists, data_dir = distributed_filenames
 
         # Fuse the received list of lists into one list
