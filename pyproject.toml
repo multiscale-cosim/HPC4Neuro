@@ -6,11 +6,11 @@ description = """\
     and Data Laboratory Neuroscience, and the High Performance \
     Computing in Neuroscience (HPCNS) division of the Jülich \
     Supercomputing Center."""
-authors = ["Fahad Khalid <f.khalid@fz-juelich.de>"]
+authors = ["Forschungszentrum Juelich GmbH"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://gitlab.version.fz-juelich.de/khalid1/slns_utils"
-repository = "https://gitlab.version.fz-juelich.de/khalid1/slns_utils"
+homepage = "https://gitlab.version.fz-juelich.de/hpc4ns/slns_utils"
+repository = "https://gitlab.version.fz-juelich.de/hpc4ns/slns_utils"
 
 [tool.poetry.dependencies]
 python = "^3.6"
