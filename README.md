@@ -111,3 +111,11 @@ static and dynamic decoration syntax:
 ### API documentation
 
 API documentation for `slns.distribution` is available [here](doc/text/index.txt).
+
+### Notes for contributors
+
+Use the following command to run tests:
+
+`mpirun -np <n> python -m pytest`
+
+where `<n>` should be replaced with the number of MPI ranks to use for testing.
