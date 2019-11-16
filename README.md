@@ -6,9 +6,20 @@ that does not appear to be available in existing packages. We therefore develop
 the required code in-house, and if it appears to be general enough, we add it
 to this collection in the hope that it may be useful to others.
 
-The following utilities are available at this time:
+## Setup and Requirements
 
-## `slns.distribution`
+The `slns` package requires `Python 3.6` or above. To install, please
+use the following command:
+
+```
+git clone git+https://gitlab.version.fz-juelich.de/khalid1/slns_utils.git
+```
+
+## Available modules
+
+The following modules are available at this time:
+
+### `slns.distribution`
 
 This module exposes the following two classes:
 1.  `DataDistributor`
@@ -30,7 +41,7 @@ The `slns.distribution` module provides a high-level interface for data distribu
 with MPI, without the explicit need to write MPI code on the user's part. The
 following examples show what the module does, and how it can be useful.
 
-### Examples
+#### Examples
 
 Consider the following code that defines a simple function which returns a list of files 
 read from a given directory. 
@@ -45,7 +56,7 @@ def get_filenames(path):
 filenames = get_filenames('./slns')
 ```
 
-#### Distributed case 1: Using the static decorator syntax
+##### Distributed case 1: Using the static decorator syntax
 
 Now consider a scenario in which we need to run this code on multiple processors across
 multiple nodes in a cluster, and distribute the returned filenames across all the processes. 
@@ -70,7 +81,7 @@ the function returns only a subset of filenames that are to be processed by the
 local MPI rank. All the MPI communication required for distribution of filenames
 is hidden from the user.
 
-### Distributed case 2: Dynamically decorating a function
+##### Distributed case 2: Dynamically decorating a function
 
 In certain scenarios it is not possible to statically decorate a function using
 the decorator syntax, e.g., when the MPI communicator object is not available
@@ -93,7 +104,7 @@ get_rank_local_filenames = dist_decorator(os.listdir)
 filenames = get_rank_local_filenames('./slns')
 ```
 
-### Support for graceful application shutdown
+#### Support for graceful application shutdown
 
 A function to be decorated by `DataDistributor`, such as `os.listdir` in the examples
 above, may raise an exception. Moreover, exceptions may be raised by `DataDistributor`
@@ -108,11 +119,11 @@ static and dynamic decoration syntax:
 
 **Dynamic:** `dist_decorator = DataDistributor(MPI.COMM_WORLD, shutdown_on_error=True)`
 
-### API documentation
+#### API documentation
 
 API documentation for `slns.distribution` is available [here](doc/text/index.txt).
 
-### Notes for contributors
+## Notes for contributors
 
 Use the following command to run tests:
 
