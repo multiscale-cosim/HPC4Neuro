@@ -110,4 +110,4 @@ static and dynamic decoration syntax:
 
 ### API documentation
 
-API documentation for `slns.distribution` is available [here](doc/html/index.html).
+API documentation for `slns.distribution` is available [here](doc/text/index.txt).

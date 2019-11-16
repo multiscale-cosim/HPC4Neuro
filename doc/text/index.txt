@@ -1,0 +1,61 @@
+SLNS Python Utilities's API documentation
+*****************************************
+
+class slns.distribution.DataDistributor(mpi_comm, shutdown_on_error=False)
+
+   A callable that serves as a decorator for any function that returns
+   an iterable of data items, and needs its functionality to be
+   extended such that the iterable returned is not the entire
+   collection, but rather only a part of the collection that is to be
+   processed by the local MPI rank.
+
+   Therefore, this decorator converts a function into one that can be
+   used for distributed processing with MPI.
+
+   __call__(data_loader, shuffle=False)
+
+      Decorates the given function so that instead of returning all
+      the data_items, the given function returns only those data_items
+      that are to be processed by the local MPI rank. All the MPI
+      communication details are handled internally, so that the caller
+      need not implement these.
+
+      Parameters:
+         * **data_loader** -- Any function that returns a sized
+           iterable of data_items, i.e., it should be possible to call
+           iter() and len() on the object returned from the function.
+           A function that does not return a sized iterable causes an
+           error. Also, if the number of items in the iterable is less
+           than the No. of MPI ranks, an error is generated.
+
+         * **shuffle** -- If True, the iterable of all data items is
+           shuffled before distribution amongst MPI ranks. RNG used is
+           from the 'random' package in the Python standard library.
+
+      Raises:
+         **slns.errors import DataDistributionError** -- can be raised
+         if 'shutdown on error' is not requested at the time of object
+         creation.
+
+      Returns:
+         Decorated function. The function when called returns a list
+         of data items to be processed by the local MPI rank.
+
+class slns.distribution.ErrorHandler
+
+   Set of functions that can gracefully handle exceptions/errors in
+   MPI programs running with one or more ranks.
+
+   static exit_all_ranks(error, mpi_comm)
+
+      Ensures a clean program exit by synchronizing all MPI ranks
+      available via the given communicator. Also, writes the message
+      string from the given error object to stderr.
+
+      Parameters:
+         * **error** -- Object, either of type Exception, or a type
+           derived from Exception.
+
+         * **mpi_comm** -- Object of type mpi4py.MPI.Comm that
+           represents the communicator for all the ranks to which the
+           given error matters.
