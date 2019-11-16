@@ -1,14 +1,26 @@
 [tool.poetry]
 name = "slns"
 version = "0.1.0"
-description = ""
+description = """\
+    A library of Python utilities developed at the Simulation \
+    and Data Laboratory Neuroscience, and the High Performance \
+    Computing in Neuroscience (HPCNS) division of the Jülich \
+    Supercomputing Center."""
 authors = ["Fahad Khalid <f.khalid@fz-juelich.de>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://gitlab.version.fz-juelich.de/khalid1/slns_utils"
+repository = "https://gitlab.version.fz-juelich.de/khalid1/slns_utils"
 
 [tool.poetry.dependencies]
 python = "^3.6"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
+pylint = "^2.4.4"
+numpy = "^1.16.0"
+mpi4py = "^3.0.3"
+sphinx = "^2.2.1"
 
 [build-system]
 requires = ["poetry>=0.12"]
