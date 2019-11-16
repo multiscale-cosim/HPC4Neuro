@@ -130,12 +130,12 @@ class DataDistributor:
                         distribution amongst MPI ranks. RNG used is from the
                         'random' package in the Python standard library.
 
-        :return Decorated function. The function when called returns a list
-                of data items to be processed by the local MPI rank.
-
-        :exception slns.errors import DataDistributionError can be raised if
+        :raises slns.errors import DataDistributionError: can be raised if
                    'shutdown on error' is not requested at the time of object
                    creation.
+
+        :returns: Decorated function. The function when called returns a list
+                of data items to be processed by the local MPI rank.
 
         """
 
@@ -283,7 +283,7 @@ class DataDistributor:
         :param data_items: Iterable of all items to be partitioned
                           amongst the ranks.
 
-        :return: Dictionary of the form {rank id: [assigned items]}
+        :returns: Dictionary of the form {rank id: [assigned items]}
 
         """
 

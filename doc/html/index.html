@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>SLNS Python Utilities documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="slns-python-utilities-s-api-documentation">
+<h1>SLNS Python Utilities’s API documentation<a class="headerlink" href="#slns-python-utilities-s-api-documentation" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="slns.distribution.DataDistributor">
+<em class="property">class </em><code class="sig-prename descclassname">slns.distribution.</code><code class="sig-name descname">DataDistributor</code><span class="sig-paren">(</span><em class="sig-param">mpi_comm</em>, <em class="sig-param">shutdown_on_error=False</em><span class="sig-paren">)</span><a class="headerlink" href="#slns.distribution.DataDistributor" title="Permalink to this definition">¶</a></dt>
+<dd><p>A callable that serves as a decorator for any function that returns an
+iterable of data items, and needs its functionality to be extended such that
+the iterable returned is not the entire collection, but rather only
+a part of the collection that is to be processed by the local MPI rank.</p>
+<p>Therefore, this decorator converts a function into one that can be used
+for distributed processing with MPI.</p>
+<dl class="method">
+<dt id="slns.distribution.DataDistributor.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">data_loader</em>, <em class="sig-param">shuffle=False</em><span class="sig-paren">)</span><a class="headerlink" href="#slns.distribution.DataDistributor.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorates the given function so that instead of returning all the
+data_items, the given function returns only those data_items that are
+to be processed by the local MPI rank. All the MPI communication
+details are handled internally, so that the caller need not
+implement these.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_loader</strong> – Any function that returns a sized iterable of data_items,
+i.e., it should be possible to call iter() and len() on
+the object returned from the function.
+A function that does not return a sized iterable causes
+an error. Also, if the number of items in the iterable
+is less than the No. of MPI ranks, an error is
+generated.</p></li>
+<li><p><strong>shuffle</strong> – If True, the iterable of all data items is shuffled before
+distribution amongst MPI ranks. RNG used is from the
+‘random’ package in the Python standard library.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>slns.errors import DataDistributionError</strong> – can be raised if
+‘shutdown on error’ is not requested at the time of object
+creation.</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Decorated function. The function when called returns a list
+of data items to be processed by the local MPI rank.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="slns.distribution.ErrorHandler">
+<em class="property">class </em><code class="sig-prename descclassname">slns.distribution.</code><code class="sig-name descname">ErrorHandler</code><a class="headerlink" href="#slns.distribution.ErrorHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set of functions that can gracefully handle exceptions/errors
+in MPI programs running with one or more ranks.</p>
+<dl class="method">
+<dt id="slns.distribution.ErrorHandler.exit_all_ranks">
+<em class="property">static </em><code class="sig-name descname">exit_all_ranks</code><span class="sig-paren">(</span><em class="sig-param">error</em>, <em class="sig-param">mpi_comm</em><span class="sig-paren">)</span><a class="headerlink" href="#slns.distribution.ErrorHandler.exit_all_ranks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensures a clean program exit by synchronizing all MPI ranks
+available via the given communicator. Also, writes the
+message string from the given error object to stderr.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>error</strong> – Object, either of type Exception, or a type derived
+from Exception.</p></li>
+<li><p><strong>mpi_comm</strong> – Object of type mpi4py.MPI.Comm that represents the
+communicator for all the ranks to which the given
+error matters.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<div class="toctree-wrapper compound">
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html#document-index">SLNS Python Utilities</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html#document-index">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Forschungszentrum Juelich GmbH.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

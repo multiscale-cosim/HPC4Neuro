@@ -107,3 +107,7 @@ static and dynamic decoration syntax:
 **Static:** `@DataDistributor(MPI.COMM_WORLD, shutdown_on_error=True)`
 
 **Dynamic:** `dist_decorator = DataDistributor(MPI.COMM_WORLD, shutdown_on_error=True)`
+
+### API documentation
+
+API documentation for `slns.distribution` is available [here](doc/html/index.html).
