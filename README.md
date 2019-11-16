@@ -19,7 +19,11 @@ git clone git+https://gitlab.version.fz-juelich.de/khalid1/slns_utils.git
 
 The following modules are available at this time:
 
-### `slns.distribution`
+### 1. `slns.distribution`
+
+**Note:** This module requires `mpi4py`. To install `mpi4py`, please 
+follow installation instructions available 
+[here](https://mpi4py.readthedocs.io/en/stable/install.html). 
 
 This module exposes the following two classes:
 1.  `DataDistributor`
