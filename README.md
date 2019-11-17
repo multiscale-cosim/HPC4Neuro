@@ -12,7 +12,7 @@ The `slns` package requires `Python 3.6` or above. To install, please
 use the following command:
 
 ```
-git clone git+https://gitlab.version.fz-juelich.de/hpc4ns/slns_utils.git
+python -m pip install clone git+https://gitlab.version.fz-juelich.de/hpc4ns/slns_utils.git
 ```
 
 ## Available modules
