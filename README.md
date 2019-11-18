@@ -129,6 +129,19 @@ API documentation for `slns.distribution` is available [here](doc/text/index.txt
 
 ## Notes for contributors
 
+### Development setup
+
+1.  Clone this repository
+2.  Change to the cloned repository directory
+3.  Create and activate a virtual environment
+4.  If you use [`poetry`](https://github.com/sdispater/poetry), run `poetry install` to install 
+all the required dependencies
+
+### Test setup
+
+[`pytest`](https://docs.pytest.org/en/latest/) is required for running and working with test code 
+for this project.
+
 Use the following command to run tests:
 
 `mpirun -np <n> python -m pytest`
