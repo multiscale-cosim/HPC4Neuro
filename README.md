@@ -47,6 +47,8 @@ following examples show what the module does, and how it can be useful.
 
 #### Examples
 
+**Note:** All examples are available in the `slns.examples.distribution` package.
+
 Consider the following code that defines a simple function which returns a list of files 
 read from a given directory. 
 
