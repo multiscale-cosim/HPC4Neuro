@@ -1,4 +1,4 @@
-# The SLNS library of Python utilities
+# The HPC4NS library of Python utilities
 
 This project brings together a collection of utilities that have been factored
 out from different projects. In certain cases we need a specific functionality
@@ -8,18 +8,18 @@ to this collection in the hope that it may be useful to others.
 
 ## Setup and Requirements
 
-The `slns` package requires `Python 3.6` or above. To install, please
+The `hpc4ns` package requires `Python 3.6` or above. To install, please
 use the following command:
 
 ```
-python -m pip install git+https://gitlab.version.fz-juelich.de/hpc4ns/slns_utils.git
+python -m pip install git+https://gitlab.version.fz-juelich.de/hpc4ns/hpc4ns_utils.git
 ```
 
 ## Available modules
 
 The following modules are available at this time:
 
-### 1. `slns.distribution`
+### 1. `hpc4ns.distribution`
 
 **Note:** This module requires `mpi4py`. To install `mpi4py`, please 
 follow installation instructions available 
@@ -41,13 +41,13 @@ networks in a data-parallel fashion using Horovod. Even though Horovod hides the
 intricate details of distributed training, proper distribution of training/validation
 data is only possible via MPI programming.
 
-The `slns.distribution` module provides a high-level interface for data distribution
+The `hpc4ns.distribution` module provides a high-level interface for data distribution
 with MPI, without the explicit need to write MPI code on the user's part. The
 following examples show what the module does, and how it can be useful.
 
 #### Examples
 
-**Note:** All examples are available in the `slns.examples.distribution` package.
+**Note:** All examples are available in the `hpc4ns.examples.distribution` package.
 
 Consider the following code that defines a simple function which returns a list of files 
 read from a given directory. 
@@ -58,28 +58,28 @@ import os
 def get_filenames(path):
     return os.listdir(path)
 
-# List of the filenames in the 'slns' directory
-filenames = get_filenames('./slns')
+# List of the filenames in the 'hpc4ns' directory
+filenames = get_filenames('./hpc4ns')
 ```
 
 ##### Distributed case 1: Using the static decorator syntax
 
 Now consider a scenario in which we need to run this code on multiple processors across
 multiple nodes in a cluster, and distribute the returned filenames across all the processes. 
-The following example shows how the `slns.distribution` module can help with that.
+The following example shows how the `hpc4ns.distribution` module can help with that.
 
 ```
 import os
 from mpi4py import MPI
 
-from slns.distribution import DataDistributor
+from hpc4ns.distribution import DataDistributor
 
 @DataDistributor(MPI.COMM_WORLD)
 def get_filenames(path):
     return os.listdir(path)
 
 # List of rank-local file names
-filenames = get_filenames('./slns')
+filenames = get_filenames('./hpc4ns')
 ```
 
 `DataDistributor` decorates the `get_filenames` function such that calling
@@ -98,7 +98,7 @@ of `DataDistributor` in such cases.
 import os
 from mpi4py import MPI
 
-from slns.distribution import DataDistributor
+from hpc4ns.distribution import DataDistributor
 
 # Initialize the decorator
 dist_decorator = DataDistributor(MPI.COMM_WORLD)
@@ -107,7 +107,7 @@ dist_decorator = DataDistributor(MPI.COMM_WORLD)
 get_rank_local_filenames = dist_decorator(os.listdir)
 
 # Use the decorated function to get the rank-local list of filenames
-filenames = get_rank_local_filenames('./slns')
+filenames = get_rank_local_filenames('./hpc4ns')
 ```
 
 #### Support for graceful application shutdown
@@ -127,7 +127,7 @@ static and dynamic decoration syntax:
 
 #### API documentation
 
-API documentation for `slns.distribution` is available [here](doc/text/index.txt).
+API documentation for `hpc4ns.distribution` is available [here](doc/text/index.txt).
 
 ## Notes for contributors
 

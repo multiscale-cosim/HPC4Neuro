@@ -1,4 +1,4 @@
-from slns import __version__
+from hpc4ns import __version__
 
 
 def test_version():

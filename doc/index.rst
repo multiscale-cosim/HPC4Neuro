@@ -1,10 +1,10 @@
-SLNS Python Utilities's API documentation
-=========================================
+HPC4NS Python Utilities's API documentation
+===========================================
 
-.. autoclass:: slns.distribution.DataDistributor
+.. autoclass:: hpc4ns.distribution.DataDistributor
    :members: __call__
 
-.. autoclass:: slns.distribution.ErrorHandler
+.. autoclass:: hpc4ns.distribution.ErrorHandler
    :members:
 
 .. toctree::

@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'SLNS Python Utilities'
+project = 'HPC4NS Python Utilities'
 copyright = '2019, Forschungszentrum Juelich GmbH'
 author = 'Forschungszentrum Juelich GmbH'
 

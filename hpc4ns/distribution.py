@@ -12,7 +12,7 @@ import random
 import itertools
 import functools
 
-from slns.errors import DataDistributionError
+from hpc4ns.errors import DataDistributionError
 
 
 @enum.unique
@@ -130,7 +130,7 @@ class DataDistributor:
                         distribution amongst MPI ranks. RNG used is from the
                         'random' package in the Python standard library.
 
-        :raises slns.errors import DataDistributionError: can be raised if
+        :raises hpc4ns.errors import DataDistributionError: can be raised if
                    'shutdown on error' is not requested at the time of object
                    creation.
 

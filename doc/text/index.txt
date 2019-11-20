@@ -1,7 +1,7 @@
-SLNS Python Utilities's API documentation
-*****************************************
+HPC4NS Python Utilities's API documentation
+*******************************************
 
-class slns.distribution.DataDistributor(mpi_comm, shutdown_on_error=False)
+class hpc4ns.distribution.DataDistributor(mpi_comm, shutdown_on_error=False)
 
    A callable that serves as a decorator for any function that returns
    an iterable of data items, and needs its functionality to be
@@ -33,15 +33,15 @@ class slns.distribution.DataDistributor(mpi_comm, shutdown_on_error=False)
            from the 'random' package in the Python standard library.
 
       Raises:
-         **slns.errors import DataDistributionError** -- can be raised
-         if 'shutdown on error' is not requested at the time of object
-         creation.
+         **hpc4ns.errors import DataDistributionError** -- can be
+         raised if 'shutdown on error' is not requested at the time of
+         object creation.
 
       Returns:
          Decorated function. The function when called returns a list
          of data items to be processed by the local MPI rank.
 
-class slns.distribution.ErrorHandler
+class hpc4ns.distribution.ErrorHandler
 
    Set of functions that can gracefully handle exceptions/errors in
    MPI programs running with one or more ranks.

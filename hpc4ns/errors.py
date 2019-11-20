@@ -7,13 +7,13 @@
 """
 
 
-class BaseSlnsError(Exception):
+class BaseHpc4nsError(Exception):
     """ Base class for all error classes in the module. """
 
 
-class MpiInitError(BaseSlnsError):
+class MpiInitError(BaseHpc4nsError):
     """ Raised if MPI initialization fails. """
 
 
-class DataDistributionError(BaseSlnsError):
+class DataDistributionError(BaseHpc4nsError):
     """ Raised if data distribution amongst MPI ranks fails. """

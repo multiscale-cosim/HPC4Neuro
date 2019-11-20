@@ -3,7 +3,7 @@
 
 """
     This program demonstrates how a library function can be decorated
-    using the slns.distribution.DataDistributor.
+    using the hpc4ns.distribution.DataDistributor.
 
     The syntax for decoration presented in this program can be useful not
     only for library functions, but also in situations where a reference
@@ -12,14 +12,14 @@
     To run this sample from the repository root, use the following
     command on your workstation/laptop:
 
-    mpirun -np 3 python -u -m slns.examples.distribution.dynamic_filenames_decorator
+    mpirun -np 3 python -u -m hpc4ns.examples.distribution.dynamic_filenames_decorator
 
 """
 
 import os
 from mpi4py import MPI
 
-from slns.distribution import DataDistributor
+from hpc4ns.distribution import DataDistributor
 
 
 # Initialize the decorator, and get a reference to the object.
