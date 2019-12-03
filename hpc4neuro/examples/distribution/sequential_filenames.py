@@ -8,7 +8,7 @@
     To run this sample from the repository root, use the following
     command on your workstation/laptop:
 
-    python -u -m hpc4ns.examples.distribution.sequential_filenames
+    python -u -m hpc4neuro.examples.distribution.sequential_filenames
 
 """
 

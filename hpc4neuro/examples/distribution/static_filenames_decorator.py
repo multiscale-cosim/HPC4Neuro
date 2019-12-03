@@ -6,20 +6,20 @@
     a list of filenames can be easily decorated to automatically
     distribute the list across multiple MPI ranks.
 
-    The hpc4ns.distribution.DataDistributor is used as
+    The hpc4neuro.distribution.DataDistributor is used as
     the decorator.
 
     To run this sample from the repository root, use the following
     command on your workstation/laptop:
 
-    mpirun -np 3 python -u -m hpc4ns.examples.distribution.static_filenames_decorator
+    mpirun -np 3 python -u -m hpc4neuro.examples.distribution.static_filenames_decorator
 
 """
 
 import os
 from mpi4py import MPI
 
-from hpc4ns.distribution import DataDistributor
+from hpc4neuro.distribution import DataDistributor
 
 
 # Decorate the function so that instead of returning the list
