@@ -12,7 +12,7 @@ The `hpc4neuro` package requires `Python 3.6` or above. To install, please
 use the following command:
 
 ```
-python -m pip install git+https://gitlab.version.fz-juelich.de/hpc4neuro/hpc4neuro_utils.git
+python -m pip install git+https://gitlab.version.fz-juelich.de/hpc4neuro/hpc4neuro.git
 ```
 
 ## Available modules
@@ -139,7 +139,8 @@ API documentation for `hpc4neuro.distribution` is available [here](doc/text/inde
 4.  If you use [`poetry`](https://github.com/sdispater/poetry), run `poetry install` to install 
 all the required dependencies
 
-To generate API documentation using `sphinx`, issue the following commands from the repository root:
+To generate API documentation using [`sphinx`](http://www.sphinx-doc.org/en/master/), issue the following commands 
+from the repository root:
 
 *  `sphinx-build -b html doc doc/html`
 *  `sphinx-build -b text doc doc/text`
