@@ -139,7 +139,7 @@ def distributed_filenames(request):
     """
 
     # Create a temporary data directory
-    with tempfile.TemporaryDirectory(prefix='hpc4ns_test_') as data_dir:
+    with tempfile.TemporaryDirectory(prefix='hpc4neuro_test_') as data_dir:
         # Generate files in the created directory
         generate_files(data_dir, num_files=num_ranks)
 

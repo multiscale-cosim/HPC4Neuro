@@ -9,8 +9,8 @@ description = """\
 authors = ["Forschungszentrum Juelich GmbH"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://gitlab.version.fz-juelich.de/hpc4neuro/hpc4ns_utils"
-repository = "https://gitlab.version.fz-juelich.de/hpc4neuro/hpc4ns_utils"
+homepage = "https://gitlab.version.fz-juelich.de/hpc4ns/hpc4neuro"
+repository = "https://gitlab.version.fz-juelich.de/hpc4ns/hpc4neuro"
 
 [tool.poetry.dependencies]
 python = "^3.6"

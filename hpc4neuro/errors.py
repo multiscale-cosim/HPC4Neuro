@@ -7,13 +7,13 @@
 """
 
 
-class BaseHpc4nsError(Exception):
+class BaseHpc4neuroError(Exception):
     """ Base class for all error classes in the module. """
 
 
-class MpiInitError(BaseHpc4nsError):
+class MpiInitError(BaseHpc4neuroError):
     """ Raised if MPI initialization fails. """
 
 
-class DataDistributionError(BaseHpc4nsError):
+class DataDistributionError(BaseHpc4neuroError):
     """ Raised if data distribution amongst MPI ranks fails. """

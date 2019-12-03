@@ -139,7 +139,10 @@ API documentation for `hpc4neuro.distribution` is available [here](doc/text/inde
 4.  If you use [`poetry`](https://github.com/sdispater/poetry), run `poetry install` to install 
 all the required dependencies
 
+To generate API documentation using `sphinx`, issue the following commands from the repository root:
 
+*  `sphinx-build -b html doc doc/html`
+*  `sphinx-build -b text doc doc/text`
 
 ### Test setup
 
