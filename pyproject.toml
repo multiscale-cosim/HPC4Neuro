@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "hpc4ns"
+name = "hpc4neuro"
 version = "0.1.0"
 description = """\
     A library of Python utilities developed at the Simulation \
@@ -9,8 +9,8 @@ description = """\
 authors = ["Forschungszentrum Juelich GmbH"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://gitlab.version.fz-juelich.de/hpc4ns/hpc4ns_utils"
-repository = "https://gitlab.version.fz-juelich.de/hpc4ns/hpc4ns_utils"
+homepage = "https://gitlab.version.fz-juelich.de/hpc4neuro/hpc4ns_utils"
+repository = "https://gitlab.version.fz-juelich.de/hpc4neuro/hpc4ns_utils"
 
 [tool.poetry.dependencies]
 python = "^3.6"

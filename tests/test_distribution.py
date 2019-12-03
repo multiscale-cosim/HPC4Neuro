@@ -2,7 +2,7 @@
 # This code is licensed under MIT license (see the LICENSE file for details)
 
 """
-    Test suite to test the hpc4ns.distribution module.
+    Test suite to test the hpc4neuro.distribution module.
 
 """
 
@@ -15,8 +15,8 @@ import pytest
 import numpy as np
 from mpi4py import MPI
 
-from hpc4ns.distribution import DataDistributor
-from hpc4ns.errors import DataDistributionError
+from hpc4neuro.distribution import DataDistributor
+from hpc4neuro.errors import DataDistributionError
 
 
 # MPI communicator info required by multiple test classes
@@ -173,7 +173,7 @@ class TestExceptionHandling:
     def test_error_from_data_loader(self):
         """
         An error thrown by the decorated data loader function should
-        be raised as hpc4ns.errors.DataDistributionError when
+        be raised as hpc4neuro.errors.DataDistributionError when
         automatic shutdown is not requested.
         """
 
@@ -189,7 +189,7 @@ class TestExceptionHandling:
     def test_error_for_non_iterable(self, tmpdir):
         """
         When the function to be decorated returns an object that is
-        not iterable, the hpc4ns.errors.DataDistributionError should
+        not iterable, the hpc4neuro.errors.DataDistributionError should
         be raised (when automatic shutdown is not requested).
 
         :param tmpdir: Temporary directory created by Pytest fixture.
@@ -210,7 +210,7 @@ class TestExceptionHandling:
     def test_error_for_non_sized(self, tmpdir):
         """
         When the function to be decorated returns an object that is
-        not sized, the hpc4ns.errors.DataDistributionError should
+        not sized, the hpc4neuro.errors.DataDistributionError should
         be raised (when automatic shutdown is not requested).
 
         :param tmpdir: Temporary directory created by Pytest fixture.
@@ -232,7 +232,7 @@ class TestExceptionHandling:
         """
         If the number of items to be distributed returned by the
         decorated function is less the number of MPI ranks, the
-        hpc4ns.errors.DataDistributionError should be raised (when
+        hpc4neuro.errors.DataDistributionError should be raised (when
         automatic shutdown is not requested).
 
         :param tmpdir: Temporary directory created by Pytest fixture.
