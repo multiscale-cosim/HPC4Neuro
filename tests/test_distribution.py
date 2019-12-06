@@ -248,13 +248,13 @@ class TestExceptionHandling:
             decorated_func(tmpdir)
 
 
-class TestFilenamesDistribution:
+class TestDataDistribution:
     """
     Tests to verify correct data distribution with different
     types of sized iterables.
 
-    The items being distributed are names of files created in
-    a temporary directory.
+    The items being distributed are different sized iterable
+    types as controlled by the corresponding fixture.
 
     """
 
