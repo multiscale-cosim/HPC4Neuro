@@ -12,7 +12,7 @@ The `hpc4neuro` package requires `Python 3.6` or above. To install, please
 use the following command:
 
 ```
-python -m pip install git+https://gitlab.version.fz-juelich.de/hpc4neuro/hpc4neuro.git
+python -m pip install git+https://gitlab.version.fz-juelich.de/hpc4ns/hpc4neuro.git
 ```
 
 ## Available modules
