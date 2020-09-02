@@ -1,5 +1,6 @@
 # Copyright (c) 2019 Forschungszentrum Juelich GmbH
-# This code is licensed under MIT license (see the LICENSE file for details)
+# This code is licensed under MIT license (see the LICENSE file for
+# details)
 
 """
     A collection of custom error classes.

@@ -1,8 +1,10 @@
 # Copyright (c) 2019 Forschungszentrum Juelich GmbH
-# This code is licensed under MIT license (see the LICENSE file for details)
+# This code is licensed under MIT license (see the LICENSE file for
+# details)
 
 """
-    Utilities for seamless distribution of data across multiple MPI ranks.
+    Utilities for seamless distribution of data across multiple MPI
+    ranks.
 
 """
 
@@ -44,18 +46,19 @@ class ErrorHandler:
         available via the given communicator. Also, writes the
         message string from the given error object to stderr.
 
-        :param error: Object, either of type Exception, or a type derived
-                      from Exception.
-        :param mpi_comm: Object of type mpi4py.MPI.Comm that represents the
-                         communicator for all the ranks to which the given
-                         error matters.
+        :param error: Object, either of type Exception, or a type
+                      derived from Exception.
+        :param mpi_comm: Object of type mpi4py.MPI.Comm that represents
+                         the communicator for all the ranks to which
+                         the given error matters.
 
         """
 
         mpi_comm.Barrier()
 
         if mpi_comm.Get_rank() == 0:
-            print(f'\n***** Fatal error: {error} *****', file=sys.stderr)
+            print(f'\n***** Fatal error: {error} *****',
+                  file=sys.stderr)
 
         mpi_comm.Barrier()
 
@@ -64,13 +67,14 @@ class ErrorHandler:
 
 class DataDistributor:
     """
-    A callable that serves as a decorator for any function that returns an
-    iterable of data items, and needs its functionality to be extended such that
-    the iterable returned is not the entire collection, but rather only
-    a part of the collection that is to be processed by the local MPI rank.
+    A callable that serves as a decorator for any function that returns
+    an iterable of data items, and needs its functionality to be
+    extended such that the iterable returned is not the entire
+    collection, but rather only a part of the collection that is to be
+    processed by the local MPI rank.
 
-    Therefore, this decorator converts a function into one that can be used
-    for distributed processing with MPI.
+    Therefore, this decorator converts a function into one that can be
+    used for distributed processing with MPI.
 
     """
 
@@ -78,11 +82,12 @@ class DataDistributor:
         """
         Initialize the object.
 
-        :param mpi_comm: Object of type mpi4py.MPI.Comm to be used as the MPI
-                         communicator.
-        :param shutdown_on_error: If True, any exception raised during data
-                                  distributions will be handled internally,
-                                  resulting in a clean exit of all MPI ranks.
+        :param mpi_comm: Object of type mpi4py.MPI.Comm to be used as
+                         the MPI communicator.
+        :param shutdown_on_error: If True, any exception raised during
+                                  data distributions will be handled
+                                  internally, resulting in a clean exit
+                                  of all MPI ranks.
 
         """
 
@@ -113,36 +118,39 @@ class DataDistributor:
 
     def __call__(self, data_loader, shuffle=False):
         """
-        Decorates the given function so that instead of returning all the
-        data_items, the given function returns only those data_items that are
-        to be processed by the local MPI rank. All the MPI communication
-        details are handled internally, so that the caller need not
-        implement these.
+        Decorates the given function so that instead of returning all
+        the data_items, the given function returns only those
+        data_items that are to be processed by the local MPI rank. All
+        the MPI communication details are handled internally, so that
+        the caller need not implement these.
 
-        :param data_loader: Any function that returns a sized iterable of data_items,
-                            i.e., it should be possible to call iter() and len() on
-                            the object returned from the function.
-                            A function that does not return a sized iterable causes
-                            an error. Also, if the number of items in the iterable
-                            is less than the No. of MPI ranks, an error is
-                            generated.
-        :param shuffle: If True, the iterable of all data items is shuffled before
-                        distribution amongst MPI ranks. RNG used is from the
-                        'random' package in the Python standard library.
+        :param data_loader: Any function that returns a sized iterable
+                    of data_items,i.e., it should be possible to call
+                    iter() and len() on the object returned from the
+                    function. A function that does not return a sized
+                    iterable causes an error. Also, if the number of
+                    items in the iterable is less than the No. of MPI
+                    ranks, an error is generated.
+        :param shuffle: If True, the iterable of all data items is
+                    shuffled before distribution amongst MPI ranks. RNG
+                    used is from the 'random' package in the Python
+                    standard library.
 
-        :raises hpc4neuro.errors import DataDistributionError: can be raised if
-                   'shutdown on error' is not requested at the time of object
-                   creation.
+        :raises hpc4neuro.errors DataDistributionError: can be
+                    raised if 'shutdown on error' is not requested at
+                    the time of object creation.
 
-        :returns: Decorated function. The function when called returns a list
-                of data items to be processed by the local MPI rank.
+        :returns: Decorated function. The function when called returns
+                    a list of data items to be processed by the local
+                    MPI rank.
 
         """
 
         @functools.wraps(data_loader)
         def wrapper(*args, **kwargs):
             if self._is_root:
-                data_items, error = self._load_data(data_loader, *args, **kwargs)
+                data_items, error = self._load_data(
+                    data_loader, *args, **kwargs)
             else:
                 data_items, error = None, None
 
@@ -162,7 +170,8 @@ class DataDistributor:
 
             if self._is_root:
                 if shuffle:
-                    data_items = random.sample(population=data_items, k=len(data_items))
+                    data_items = random.sample(
+                        population=data_items, k=len(data_items))
 
                 # Data to send
                 bcast_data = self._create_rank_to_items_map(data_items)
@@ -188,7 +197,8 @@ class DataDistributor:
         except Exception as error:  # pylint: disable=broad-except
             result = {
                 Constants.STATUS: Constants.FAILURE,
-                Constants.MESSAGE: f'Error during data loading: {str(error)}'
+                Constants.MESSAGE:
+                    f'Error during data loading: {str(error)}'
             }
         else:
             result = {
@@ -218,18 +228,20 @@ class DataDistributor:
         return result
 
     def _check_if_iterable(self, data_items):
-        err_msg = f'Value returned by the provided data loader is not an' \
-                  f'iterable, i.e., it is not possible to call iter() on it. ' \
-                  f'The function to be decorated by {self.__class__.__name__} ' \
-                  f'must return an iterable.'
+        err_msg = f'Value returned by the provided data loader is ' \
+                  f'not an iterable, i.e., it is not possible to ' \
+                  f'call iter() on it. The function to be decorated ' \
+                  f'by {self.__class__.__name__} must return an ' \
+                  f'iterable.'
 
         return self._check_type(data_items, iter, err_msg)
 
     def _check_if_sized(self, data_items):
-        err_msg = f'Value returned by the provided data loader is not a sized' \
-                  f'object, i.e., it is not possible to call len() on it. ' \
-                  f'The function to be decorated by {self.__class__.__name__} ' \
-                  f'must return a sized object.'
+        err_msg = f'Value returned by the provided data loader is ' \
+                  f'not a sized object, i.e., it is not possible to ' \
+                  f'call len() on it. The function to be decorated ' \
+                  f'by {self.__class__.__name__} must return a sized ' \
+                  f'object.'
 
         return self._check_type(data_items, len, err_msg)
 
@@ -237,13 +249,15 @@ class DataDistributor:
         result = None
 
         if self._is_root:
-            # Make sure there are at least as many data items as MPI ranks,
-            # so that each MPI rank has at least one item to process.
+            # Make sure there are at least as many data items as MPI
+            # ranks, so that each MPI rank has at least one item to
+            # process.
             if len(data_items) < self._num_ranks:
-                err_msg = f'No. of input data items ({len(data_items)}) is less than the ' \
-                          f'No. of MPI ranks ({self._num_ranks}). ' \
-                          'No. of input data items must be equal to or greater than ' \
-                          'the No. of MPI ranks.'
+                err_msg = f'No. of input data items ' \
+                          f'({len(data_items)}) is less than the No. ' \
+                          f'of MPI ranks ({self._num_ranks}). No. ' \
+                          f'of input data items must be equal to or ' \
+                          f'greater than the No. of MPI ranks.'
 
                 result = {
                     Constants.STATUS: Constants.FAILURE,

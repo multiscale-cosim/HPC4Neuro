@@ -1,5 +1,6 @@
 # Copyright (c) 2019 Forschungszentrum Juelich GmbH
-# This code is licensed under MIT license (see the LICENSE file for details)
+# This code is licensed under MIT license (see the LICENSE file for
+# details)
 
 """
     This program demonstrates how a function that reads and returns
@@ -12,7 +13,8 @@
     To run this sample from the repository root, use the following
     command on your workstation/laptop:
 
-    mpirun -np 3 python -u -m hpc4neuro.examples.distribution.static_filenames_decorator
+    mpirun -np 3 python -u -m \
+        hpc4neuro.examples.distribution.static_filenames_decorator
 
 """
 

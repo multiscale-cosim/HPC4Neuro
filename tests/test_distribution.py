@@ -1,5 +1,6 @@
 # Copyright (c) 2019 Forschungszentrum Juelich GmbH
-# This code is licensed under MIT license (see the LICENSE file for details)
+# This code is licensed under MIT license (see the LICENSE file for
+# details)
 
 """
     Test suite to test the hpc4neuro.distribution module.
@@ -25,6 +26,7 @@ num_ranks = MPI.COMM_WORLD.Get_size()
 
 
 class SizedIterable:
+    # pylint: disable=too-few-public-methods
     """
     A type that is both iterable and sized.
 
@@ -41,6 +43,7 @@ class SizedIterable:
 
 
 class IterableNotSized:
+    # pylint: disable=too-few-public-methods
     """
     An iterable type that is not sized.
 
@@ -54,6 +57,7 @@ class IterableNotSized:
 
 
 class SizedNotIterable:
+    # pylint: disable=too-few-public-methods
     """
     A sized type that is not iterable.
 
@@ -113,7 +117,8 @@ def get_decorated_func(func, shutdown_on_error):
     return the decorated function.
 
     :param func: Function to be decorated.
-    :param shutdown_on_error: Parameter to be passed to the DataDistributor.
+    :param shutdown_on_error: Parameter to be passed to the
+            DataDistributor.
 
     :return: Decorated function.
 
@@ -152,14 +157,16 @@ def distributed_filenames(request):
             data_loader = change_result_type(os.listdir, np.char.array)
 
         # Decorate the data loader with distribution functionality
-        decorated_func = get_decorated_func(data_loader, shutdown_on_error=False)
+        decorated_func = get_decorated_func(
+            data_loader, shutdown_on_error=False)
 
         # Call the decorated function to get the list of rank-local
         # filenames
         rank_local_filenames = decorated_func(data_dir)
 
         # Collect a list of all lists of filenames from all ranks
-        gathered_filename_lists = MPI.COMM_WORLD.allgather(rank_local_filenames)
+        gathered_filename_lists = MPI.COMM_WORLD.allgather(
+            rank_local_filenames)
 
         yield gathered_filename_lists, data_dir
 
@@ -170,7 +177,8 @@ class TestExceptionHandling:
 
     """
 
-    def test_error_from_data_loader(self):
+    @staticmethod
+    def test_error_from_data_loader():
         """
         An error thrown by the decorated data loader function should
         be raised as hpc4neuro.errors.DataDistributionError when
@@ -178,7 +186,8 @@ class TestExceptionHandling:
         """
 
         # Decorate the data loader with distribution functionality
-        decorated_func = get_decorated_func(func=os.listdir, shutdown_on_error=False)
+        decorated_func = get_decorated_func(
+            func=os.listdir, shutdown_on_error=False)
 
         # Distribution error should be thrown because the loader
         # function should generated an error when trying to list
@@ -186,7 +195,8 @@ class TestExceptionHandling:
         with pytest.raises(DataDistributionError):
             decorated_func('./non-existent-dir')
 
-    def test_error_for_non_iterable(self, tmpdir):
+    @staticmethod
+    def test_error_for_non_iterable(tmpdir):
         """
         When the function to be decorated returns an object that is
         not iterable, the hpc4neuro.errors.DataDistributionError should
@@ -202,12 +212,14 @@ class TestExceptionHandling:
         data_loader = change_result_type(os.listdir, SizedNotIterable)
 
         # Decorate the data loader with distribution functionality
-        decorated_func = get_decorated_func(data_loader, shutdown_on_error=False)
+        decorated_func = get_decorated_func(
+            data_loader, shutdown_on_error=False)
 
         with pytest.raises(DataDistributionError):
             decorated_func(tmpdir)
 
-    def test_error_for_non_sized(self, tmpdir):
+    @staticmethod
+    def test_error_for_non_sized(tmpdir):
         """
         When the function to be decorated returns an object that is
         not sized, the hpc4neuro.errors.DataDistributionError should
@@ -223,12 +235,14 @@ class TestExceptionHandling:
         data_loader = change_result_type(os.listdir, IterableNotSized)
 
         # Decorate the data loader with distribution functionality
-        decorated_func = get_decorated_func(data_loader, shutdown_on_error=False)
+        decorated_func = get_decorated_func(
+            data_loader, shutdown_on_error=False)
 
         with pytest.raises(DataDistributionError):
             decorated_func(tmpdir)
 
-    def test_error_for_size_mismatch(self, tmpdir):
+    @staticmethod
+    def test_error_for_size_mismatch(tmpdir):
         """
         If the number of items to be distributed returned by the
         decorated function is less the number of MPI ranks, the
@@ -242,7 +256,8 @@ class TestExceptionHandling:
         generate_files(tmpdir, num_files=num_ranks - 1)
 
         # Decorate the data loader with distribution functionality
-        decorated_func = get_decorated_func(os.listdir, shutdown_on_error=False)
+        decorated_func = get_decorated_func(
+            os.listdir, shutdown_on_error=False)
 
         with pytest.raises(DataDistributionError):
             decorated_func(tmpdir)
@@ -258,7 +273,9 @@ class TestDataDistribution:
 
     """
 
-    def test_all_ranks_get_items(self, distributed_filenames):
+    @staticmethod
+    def test_all_ranks_get_items(distributed_filenames):
+        # pylint: disable=redefined-outer-name
         """
         Verify that each rank receives at least one item as a
         result of distribution.
@@ -276,7 +293,9 @@ class TestDataDistribution:
         # Every sublist must contain at least one element
         assert all(filenames for filenames in gathered_filename_lists)
 
-    def test_ranks_get_disjoint_subsets(self, distributed_filenames):
+    @staticmethod
+    def test_ranks_get_disjoint_subsets(distributed_filenames):
+        # pylint: disable=redefined-outer-name
         """
         Verify that ranks receive disjoint subsets of items, i.e., no
         two ranks receive the same item.
@@ -294,7 +313,9 @@ class TestDataDistribution:
         # Verify that all items in the list are unique
         assert len(all_filenames) == len(set(all_filenames))
 
-    def test_all_items_are_distributed(self, distributed_filenames):
+    @staticmethod
+    def test_all_items_are_distributed(distributed_filenames):
+        # pylint: disable=redefined-outer-name
         """
         Verify that items from the iterable are all distributed, i.e.,
         no item is left out.
@@ -314,4 +335,4 @@ class TestDataDistribution:
             read_filenames = os.listdir(data_dir)
 
             # Verify that contents are the same
-            assert not (set(all_filenames) ^ set(read_filenames))
+            assert not set(all_filenames) ^ set(read_filenames)
