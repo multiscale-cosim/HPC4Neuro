@@ -6,13 +6,26 @@ that does not appear to be available in existing packages. We therefore develop
 the required code in-house, and if it appears to be general enough, we add it
 to this collection in the hope that it may be useful to others.
 
+This library has moved from https://gitlab.jsc.fz-juelich.de/hpc4ns/hpc4neuro
+to Github and will be, where possible, supported by the Multiscale team.
+
+This library has been written by Fahad Khalid at the Forschungszentrum Juelich GmbH
+
+MIT License
+Copyright (c) 2019 Forschungszentrum Juelich GmbH
+
+Question can be placed at the main repo:
+https://github.com/multiscale-cosim/EBRAINS-cosim
+
+or by sending an email to w.klijn@fz-juelich.de
+
 ## Setup and Requirements
 
 The `hpc4neuro` package requires `Python 3.6` or above. To install, please
 use the following command:
 
 ```
-python -m pip install git+https://gitlab.version.fz-juelich.de/hpc4ns/hpc4neuro.git
+python -m pip install git+https://github.com/multiscale-cosim/HPC4Neuro.git
 ```
 
 ## Available modules
